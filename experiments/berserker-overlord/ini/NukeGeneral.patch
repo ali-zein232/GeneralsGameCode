@@ -1,0 +1,15 @@
+diff --git a/Object/NukeGeneral.ini b/Object/NukeGeneral.ini
+index 60df6ed97..1547d0be6 100644
+--- a/Object/NukeGeneral.ini
++++ b/Object/NukeGeneral.ini
+@@ -16730,6 +16730,10 @@ Object Nuke_ChinaTankOverlord
+     OCL = FINAL    OCL_ChinaTankOverlordDebris
+     FX  = FINAL    FX_OverlordExplosionOneFinal
+   End
++  Behavior = FireWeaponWhenDeadBehavior ModuleTag_ChaosNuke
++    DeathWeapon = ChaosHumveeDeathWeapon
++    StartsActive = Yes
++  End
+   Behavior = CreateCrateDie ModuleTag_17
+     CrateData = SalvageCrateData
+     ;CrateData = EliteTankCrateData

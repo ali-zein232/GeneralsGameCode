@@ -1,0 +1,65 @@
+diff --git a/Locomotor.ini b/Locomotor.ini
+index 758ce5a54..d630c2128 100644
+--- a/Locomotor.ini
++++ b/Locomotor.ini
+@@ -743,11 +743,11 @@ End
+ Locomotor OverlordLocomotor
+   Surfaces            = GROUND
+   Speed               = 20   ; in dist/sec
+-  SpeedDamaged        = 20   ; in dist/sec
+-  TurnRate            = 60   ;25   ; in degrees/sec
+-  TurnRateDamaged     = 60   ;20   ; in degrees/sec
++  SpeedDamaged        = 90   ; in dist/sec
++  TurnRate            = 100   ;25   ; in degrees/sec
++  TurnRateDamaged     = 200   ;20   ; in degrees/sec
+   Acceleration        = 15   ; in dist/(sec^2)
+-  AccelerationDamaged = 15   ; in dist/(sec^2)
++  AccelerationDamaged = 90   ; in dist/(sec^2)
+   Braking             = 50   ; in dist/(sec^2)
+   MinTurnSpeed        = 0    ; in dist/sec
+   ZAxisBehavior       = NO_Z_MOTIVE_FORCE
+@@ -792,14 +792,14 @@ End
+ ;------------------------------------------------------------------------------
+ Locomotor NuclearOverlordLocomotor
+   Surfaces            = GROUND
+-  Speed               = 30   ; 33% faster than normal
+-  SpeedDamaged        = 30   ; 33% faster than normal
+-  TurnRate            = 60   ;32   ; 33% faster than normal
+-  TurnRateDamaged     = 60   ;27   ; 33% faster than normal
+-  Acceleration        = 30   ; 33% faster than normal
+-  AccelerationDamaged = 30   ; 33% faster than normal
+-  Braking             = 50  ; in dist/(sec^2)
+-  MinTurnSpeed        = 0   ; in dist/sec
++  Speed               = 30
++  SpeedDamaged        = 90
++  TurnRate            = 60
++  TurnRateDamaged     = 180
++  Acceleration        = 30
++  AccelerationDamaged = 100
++  Braking             = 50
++  MinTurnSpeed        = 0
+   ZAxisBehavior       = NO_Z_MOTIVE_FORCE
+   Appearance          = TREADS
+ 
+@@ -4582,16 +4582,18 @@ End
+ Locomotor Nuke_FusionOverlordLocomotor
+   Surfaces            = GROUND
+   Speed               = 40
+-  SpeedDamaged        = 40
++  SpeedDamaged        = 90
+   TurnRate            = 80
+-  TurnRateDamaged     = 80
++  TurnRateDamaged     = 180
+   Acceleration        = 30
+-  AccelerationDamaged = 30   
++  AccelerationDamaged = 100   
+   Braking             = 50  
+   MinTurnSpeed        = 0   
+   ZAxisBehavior       = NO_Z_MOTIVE_FORCE
+   Appearance          = TREADS
+ 
++
++
+   AccelerationPitchLimit = 2              ; Angle limit how far chassis will lift or roll from acceleration.
+   DecelerationPitchLimit = 2              ; Angle limit how far chassis will dip from deceleration.
+   PitchStiffness = 0.05                   ;  stiffness of the "springs" in the suspension forward & back.

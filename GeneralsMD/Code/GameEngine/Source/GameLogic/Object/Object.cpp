@@ -1909,12 +1909,53 @@ ObjectShroudStatus Object::getShroudedStatus(Int playerIndex) const
 //-------------------------------------------------------------------------------------------------
 /** Something is attempting to damage this object */
 //-------------------------------------------------------------------------------------------------
+static bool isBerserkerOverlord(const AsciiString& name)
+{
+	return name.compare("ChinaTankOverlord") == 0 ||
+		name.compare("Tank_ChinaTankEmperor") == 0 ||
+		name.compare("Nuke_ChinaTankOverlord") == 0;
+}
+void Object::updateBerserkerState()
+{
+	if (!isBerserkerOverlord(getTemplate()->getName()))
+	{
+		return;
+	}
+
+	BodyModuleInterface* body = getBodyModule();
+
+	if (!body)
+	{
+		return;
+	}
+
+	const Real maxHealth = body->getMaxHealth();
+
+	if (maxHealth <= 0.0f)
+	{
+		return;
+	}
+
+	const Real currentHealth = body->getHealth();
+	const Real healthRatio = currentHealth / maxHealth;
+
+	if (currentHealth > 0.0f && healthRatio <= 0.35f)
+	{
+		setWeaponBonusCondition(WEAPONBONUSCONDITION_BERSERKER);
+	}
+	else
+	{
+		clearWeaponBonusCondition(WEAPONBONUSCONDITION_BERSERKER);
+	}
+}
 void Object::attemptDamage( DamageInfo *damageInfo )
 {
 	BodyModuleInterface* body = getBodyModule();
 	if (body)
-		body->attemptDamage( damageInfo );
-
+	{
+		body->attemptDamage(damageInfo);
+		updateBerserkerState();
+	}
 	// Process any shockwave forces that might affect this object due to the incurred damage
 	if (damageInfo->in.m_shockWaveAmount > 0.0f && damageInfo->in.m_shockWaveRadius > 0.0f)
 	{
@@ -1985,7 +2026,8 @@ void Object::attemptHealing(Real amount, const Object* source)
 		damageInfo.in.m_deathType = DEATH_NONE;
 		damageInfo.in.m_sourceID = source ? source->getID() : INVALID_ID;
 		damageInfo.in.m_amount = amount;
-		body->attemptHealing( &damageInfo );
+		body->attemptHealing(&damageInfo);
+		updateBerserkerState();
 	}
 }
 
@@ -2023,7 +2065,8 @@ Bool Object::attemptHealingFromSoleBenefactor ( Real amount, const Object* sourc
 			damageInfo.in.m_deathType = DEATH_NONE;
 			damageInfo.in.m_sourceID = source ? source->getID() : INVALID_ID;
 			damageInfo.in.m_amount = amount;
-			body->attemptHealing( &damageInfo );
+			body->attemptHealing(&damageInfo);
+			updateBerserkerState();
 		}
 
 		return TRUE;

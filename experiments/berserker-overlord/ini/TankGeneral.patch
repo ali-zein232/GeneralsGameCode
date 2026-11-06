@@ -1,0 +1,16 @@
+diff --git a/Object/TankGeneral.ini b/Object/TankGeneral.ini
+index 9d7054a80..82d0930c5 100644
+--- a/Object/TankGeneral.ini
++++ b/Object/TankGeneral.ini
+@@ -3112,6 +3112,11 @@ Object Tank_ChinaTankEmperor
+     OCL = FINAL    OCL_ChinaTankOverlordDebris
+     FX  = FINAL    FX_OverlordExplosionOneFinal
+   End
++  Behavior = FireWeaponWhenDeadBehavior ModuleTag_ChaosNuke
++    DeathWeapon = ChaosHumveeDeathWeapon
++    StartsActive = Yes
++  End
++  
+   Behavior = CreateCrateDie ModuleTag_17
+     CrateData = SalvageCrateData
+     ;CrateData = EliteTankCrateData

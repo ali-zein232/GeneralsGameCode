@@ -1,0 +1,13 @@
+diff --git a/GameData.ini b/GameData.ini
+index c0ef41a2d..994b9159d 100644
+--- a/GameData.ini
++++ b/GameData.ini
+@@ -329,7 +329,7 @@ GameData
+   WeaponBonus = FRENZY_ONE    DAMAGE 110% ; Granted by a China Generals power
+   WeaponBonus = FRENZY_TWO    DAMAGE 120%
+   WeaponBonus = FRENZY_THREE  DAMAGE 130%
+-    
++  WeaponBonus = BERSERKER DAMAGE 1000%  
+   WeaponBonus = VETERAN  RATE_OF_FIRE  120%  
+   WeaponBonus = VETERAN  DAMAGE        110%
+   WeaponBonus = ELITE    RATE_OF_FIRE  140%

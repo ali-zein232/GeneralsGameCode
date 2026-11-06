@@ -1,0 +1,17 @@
+diff --git a/Object/ChinaVehicle.ini b/Object/ChinaVehicle.ini
+index 22633d02c..822a0ee08 100644
+--- a/Object/ChinaVehicle.ini
++++ b/Object/ChinaVehicle.ini
+@@ -415,6 +415,12 @@ Object ChinaTankOverlord
+     OCL = FINAL    OCL_ChinaTankOverlordDebris
+     FX  = FINAL    FX_OverlordExplosionOneFinal
+   End
++
++  Behavior = FireWeaponWhenDeadBehavior ModuleTag_ChaosNuke
++    DeathWeapon  = ChaosHumveeDeathWeapon
++    StartsActive = Yes
++  End
++
+   Behavior = CreateCrateDie ModuleTag_17
+     CrateData = SalvageCrateData
+     ;CrateData = EliteTankCrateData

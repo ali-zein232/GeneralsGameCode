@@ -689,7 +689,7 @@ protected:
 #endif
 
 private:
-
+	void updateBerserkerState();
 	// yes, private. No, really. Private. Don't expose.
 	enum ObjectPrivateStatusBits
 	{

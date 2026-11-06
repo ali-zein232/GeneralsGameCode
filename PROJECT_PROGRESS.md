@@ -172,3 +172,10 @@ After meaningful work, update only what changed:
 5. **Build/Git status:** Refresh only after verification—do not silently carry forward assumptions about current commit, branch, working tree, or game behavior.
 
 For substantial changes, review the Markdown diff before committing this document. Keep detailed debugging transcripts in issues, commits, or separate notes rather than letting this file become a full chat history.
+### 2026-11-06 — Berserker Overlord Experiment
+
+Implemented and successfully tested a health-triggered Berserker mechanic for all three Overlord variants using C++ and INI modifications.
+
+**Learning milestones:** Practiced C++ member functions, health-state logic, refactoring duplicated code, reviewing Git diffs, and creating reproducible INI patches.
+
+**Details:** `experiments/berserker-overlord/README.md`
