@@ -920,53 +920,50 @@ void WaterRenderObjClass::ReAcquireResources()
 
 	if (W3DShaderManager::getChipset() >= DC_GENERIC_PIXEL_SHADER_1_1)
 	{
-		ID3DXBuffer *compiledShader;
-		const char *shader =
-			"ps.1.1\n \
-			tex t0 \n\
-			tex t1	\n\
-			tex t2	\n\
-			tex t3\n\
-			mul r0.rgb, v0, t0 ; blend vertex color into t0. \n\
-			mov r0.a, t0 ; keep vertex alpha from fading the base water. \n\
-			mul r1, t1, t2 ; mul\n\
-			add r1.rgb, r1, t3\n\
-			mul r1.rgb, r1, v0.a\n\
-			+mul r0.a, r0, t3\n\
-			add r0.rgb, r0, r1\n";
-		hr = D3DXAssembleShader( shader, strlen(shader), 0, nullptr, &compiledShader, nullptr);
-		if (hr==0) {
-			hr = 	DX8Wrapper::_Get_D3D_Device8()->CreatePixelShader((DWORD*)compiledShader->GetBufferPointer(), &m_riverWaterPixelShader);
-			compiledShader->Release();
-		}
-		shader =
-			"ps.1.1\n \
-			tex t0 \n\
-			tex t1	\n\
-			texbem t2, t1 ; use t1 as env map adjustment on t2.\n\
-			mul r0,v0,t0 ; blend vertex color into t0. \n\
-			mul r1.rgb,t2,c0 ; reduce t2 (environment mapped reflection) by constant\n\
-			add r0.rgb, r0, r1";
-		hr = D3DXAssembleShader( shader, strlen(shader), 0, nullptr, &compiledShader, nullptr);
-		if (hr==0) {
-			hr = 	DX8Wrapper::_Get_D3D_Device8()->CreatePixelShader((DWORD*)compiledShader->GetBufferPointer(), &m_waterPixelShader);
-			compiledShader->Release();
-		}
-		shader =
-			"ps.1.1\n \
-			tex t0 ;get water texture\n\
-			tex t1 ;get white highlights on black background\n\
-			tex t2 ;get white highlights with more tiling\n\
-			tex t3	; get black shroud \n\
-			mul r0,v0,t0 ; blend vertex color and alpha into base texture. \n\
-			mad r0.rgb, t1, t2, r0	; blend sparkles and noise \n\
-			mul r0.rgb, r0, t3 ; blend in black shroud \n\
-			;\n";
-		hr = D3DXAssembleShader( shader, strlen(shader), 0, nullptr, &compiledShader, nullptr);
-		if (hr==0) {
-			hr = 	DX8Wrapper::_Get_D3D_Device8()->CreatePixelShader((DWORD*)compiledShader->GetBufferPointer(), &m_trapezoidWaterPixelShader);
-			compiledShader->Release();
-		}
+		static const DWORD riverWaterShader[] =
+		{
+			D3DPS_VERSION(1, 1),
+			0x00000042, 0xb00f0000,                         // tex t0
+			0x00000042, 0xb00f0001,                         // tex t1
+			0x00000042, 0xb00f0002,                         // tex t2
+			0x00000042, 0xb00f0003,                         // tex t3
+			0x00000005, 0x80070000, 0x90e40000, 0xb0e40000, // mul r0.rgb, v0, t0 ; blend vertex color into t0.
+			0x00000001, 0x80080000, 0xb0e40000,             // mov r0.a, t0 ; keep vertex alpha from fading the base water.
+			0x00000005, 0x800f0001, 0xb0e40001, 0xb0e40002, // mul r1, t1, t2
+			0x00000002, 0x80070001, 0x80e40001, 0xb0e40003, // add r1.rgb, r1, t3
+			0x00000005, 0x80070001, 0x80e40001, 0x90ff0000, // mul r1.rgb, r1, v0.a
+			0x40000005, 0x80080000, 0x80e40000, 0xb0e40003, // +mul r0.a, r0, t3
+			0x00000002, 0x80070000, 0x80e40000, 0x80e40001, // add r0.rgb, r0, r1
+			D3DPS_END(),
+		};
+		hr = DX8Wrapper::_Get_D3D_Device8()->CreatePixelShader(riverWaterShader, &m_riverWaterPixelShader);
+
+		static const DWORD waterShader[] =
+		{
+			D3DPS_VERSION(1, 1),
+			0x00000042, 0xb00f0000,                         // tex t0
+			0x00000042, 0xb00f0001,                         // tex t1
+			0x00000043, 0xb00f0002, 0xb0e40001,             // texbem t2, t1 ; use t1 as env map adjustment on t2.
+			0x00000005, 0x800f0000, 0x90e40000, 0xb0e40000, // mul r0, v0, t0 ; blend vertex color into t0.
+			0x00000005, 0x80070001, 0xb0e40002, 0xa0e40000, // mul r1.rgb, t2, c0 ; reduce t2 (environment mapped reflection) by constant
+			0x00000002, 0x80070000, 0x80e40000, 0x80e40001, // add r0.rgb, r0, r1
+			D3DPS_END(),
+		};
+		hr = DX8Wrapper::_Get_D3D_Device8()->CreatePixelShader(waterShader, &m_waterPixelShader);
+
+		static const DWORD trapezoidWaterShader[] =
+		{
+			D3DPS_VERSION(1, 1),
+			0x00000042, 0xb00f0000,                                     // tex t0 ; get water texture
+			0x00000042, 0xb00f0001,                                     // tex t1 ; get white highlights on black background
+			0x00000042, 0xb00f0002,                                     // tex t2 ; get white highlights with more tiling
+			0x00000042, 0xb00f0003,                                     // tex t3 ; get black shroud
+			0x00000005, 0x800f0000, 0x90e40000, 0xb0e40000,             // mul r0, v0, t0 ; blend vertex color and alpha into base texture.
+			0x00000004, 0x80070000, 0xb0e40001, 0xb0e40002, 0x80e40000, // mad r0.rgb, t1, t2, r0 ; blend sparkles and noise
+			0x00000005, 0x80070000, 0x80e40000, 0xb0e40003,             // mul r0.rgb, r0, t3 ; blend in black shroud
+			D3DPS_END(),
+		};
+		hr = DX8Wrapper::_Get_D3D_Device8()->CreatePixelShader(trapezoidWaterShader, &m_trapezoidWaterPixelShader);
 	}
 
 	//W3D Invalidate textures after losing the device and since we peek at the textures directly, it won't
@@ -1791,7 +1788,7 @@ void WaterRenderObjClass::drawSea(RenderInfoClass & rinfo)
 	matWW3D._23=1.0f;
 	matWW3D._44=1.0f;
 
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,Transform);	//position the water surface
+	Renderer::Set_Transform(RenderTransform_World,Transform);	//position the water surface
 	DX8Wrapper::Set_Texture(0,nullptr);	//we'll be setting our own textures, so reset W3D
 	DX8Wrapper::Set_Texture(1,nullptr);	//we'll be setting our own textures, so reset W3D
 
@@ -2111,7 +2108,7 @@ void WaterRenderObjClass::renderSky()
 
 	Matrix3D tm(1);
 	tm.Set_Translation(Vector3(0,0,0));
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
+	Renderer::Set_Transform(RenderTransform_World,tm);
 
 	DX8Wrapper::Draw_Triangles(	0,2, 0,	4);	//draw a quad, 2 triangles, 4 verts
 }
@@ -2153,7 +2150,7 @@ void WaterRenderObjClass::renderSkyBody(Matrix3D *mat)
 	tm.Adjust_Translation(Vector3(SKYBODY_X,SKYBODY_Y,SKYBODY_HEIGHT));
 
 
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
+	Renderer::Set_Transform(RenderTransform_World,tm);
 
 
 	VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
@@ -2362,7 +2359,7 @@ void WaterRenderObjClass::renderWaterMesh()
 
 	m_vertexBufferD3D->Unlock();
 
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,Transform);	//position the water surface
+	Renderer::Set_Transform(RenderTransform_World,Transform);	//position the water surface
 	DX8Wrapper::Set_Material(m_meshVertexMaterialClass);
 
 	ShaderClass::CullModeType oldCullMode=m_shaderClass.Get_Cull_Mode();
@@ -2893,7 +2890,7 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 
 	Matrix3D tm(1);
 
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);	//position the water surface
+	Renderer::Set_Transform(RenderTransform_World,tm);	//position the water surface
 	DX8Wrapper::Set_Index_Buffer(ib_access,0);
 	DX8Wrapper::Set_Vertex_Buffer(vb_access);
 	DX8Wrapper::Set_Texture(0,m_riverTexture);	//set to blue
@@ -3257,7 +3254,7 @@ void WaterRenderObjClass::drawTrapezoidWater(Vector3 points[4])
 
 	Matrix3D tm(1);
 
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);	//position the water surface
+	Renderer::Set_Transform(RenderTransform_World,tm);	//position the water surface
 	DX8Wrapper::Set_Index_Buffer(ib_access,0);
 	DX8Wrapper::Set_Vertex_Buffer(vb_access);
 
@@ -3422,7 +3419,7 @@ void WaterRenderObjClass::renderSkyBody(Matrix3D *mat)
 	Matrix3D tm(1);
 	//set position of skybody in world
 //	tm.Set_Translation(Vector3(40,0,0));
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
+	Renderer::Set_Transform(RenderTransform_World,tm);
 
 	DX8Wrapper::Draw_Triangles(	0,2, 0,	4);	//draw a quad, 2 triangles, 4 verts
 }
